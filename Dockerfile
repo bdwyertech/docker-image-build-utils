@@ -4,7 +4,7 @@ MAINTAINER Brian Dwyer
 
 # Update & Install Ruby
 RUN apk update && apk upgrade \
-    && apk add bash ruby \
+    && apk add bash ruby ruby-json \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf
