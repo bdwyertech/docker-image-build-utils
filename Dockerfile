@@ -4,7 +4,7 @@ MAINTAINER Brian Dwyer
 
 # Update PIP & Install PIPEnv
 RUN python -m pip install --upgrade pip \
-    python -m pip install --upgrade pipenv \
+    && python -m pip install --upgrade pipenv \
     && rm -rf ~/.cache/pip
 
 # Update & Install Ruby
