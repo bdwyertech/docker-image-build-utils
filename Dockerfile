@@ -11,7 +11,3 @@ RUN apk update && apk upgrade \
 RUN apk add --no-cache --virtual .build-deps ruby-dev build-base \
     && gem install berkshelf \
     && apk del .build-deps
-
-RUN adduser builder -Du 12345
-USER builder:builder
-WORKDIR /home/builder
