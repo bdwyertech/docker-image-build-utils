@@ -11,3 +11,6 @@ RUN apk update && apk upgrade \
 RUN apk add --no-cache --virtual .build-deps ruby-dev build-base \
     && gem install berkshelf \
     && apk del .build-deps
+
+USER bin:nogroup
+WORKDIR /usr/src/
