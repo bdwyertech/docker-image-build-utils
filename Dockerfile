@@ -9,7 +9,7 @@ RUN python -m pip install --upgrade pip \
 
 # Update & Install Ruby
 RUN apk update && apk upgrade \
-    && apk add bash ca-certificates ruby ruby-json wget \
+    && apk add --no-cache bash ca-certificates git ruby ruby-json wget \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf
