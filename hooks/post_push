@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+# Python 3.6 is the Default
+if [ "$DOCKER_TAG" == 'py36' ]; then
+	docker tag "$IMAGE_NAME" "${DOCKER_REPO}:latest"
+	docker push "${DOCKER_REPO}:latest"
+fi
+
+# TAG_START=$(expr index "$IMAGE_NAME" :)
+# TAG_NAME=${IMAGE_NAME:TAG_START}
+# REPO_NAME=${IMAGE_NAME:0:TAG_START-1}
+
+# Tag with the Commit ID
+# docker tag $IMAGE_NAME $REPO_NAME:$SOURCE_COMMIT
+# docker push $REPO_NAME:$SOURCE_COMMIT
