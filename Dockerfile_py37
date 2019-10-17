@@ -23,7 +23,6 @@ RUN apk update && apk upgrade \
 
 # Install Berkshelf
 RUN apk add --no-cache --virtual .build-deps ruby-dev build-base \
-    && gem install ohai -v 14.14.0 \
     && gem install berkshelf \
     && apk del .build-deps \
     && rm -rf ~/.gem
