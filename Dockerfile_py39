@@ -26,3 +26,6 @@ RUN apk add --no-cache --virtual .build-deps ruby-dev build-base \
     && gem install berkshelf \
     && apk del .build-deps \
     && rm -rf ~/.gem
+
+# Hide Ruby Warnings
+ENV RUBYOPT='-W0'
