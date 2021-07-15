@@ -1,4 +1,4 @@
-FROM python:3.8-alpine
+FROM python:3.8-alpine3.13
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -24,8 +24,6 @@ RUN apk update && apk upgrade \
 # Install Berkshelf
 RUN apk add --no-cache --virtual .build-deps ruby-dev build-base \
     && gem install berkshelf \
-    && mkdir -p '/root/.berkshelf/cookbooks' \
-    && chmod 0777 '/root/.berkshelf/cookbooks' \
     && apk del .build-deps \
     && rm -rf ~/.gem
 
