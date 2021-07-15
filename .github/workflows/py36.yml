@@ -1,4 +1,4 @@
-name: Create and publish py39 Docker image to GitHub Container Registry & DockerHub
+name: Create and publish py36 Docker image to GitHub Container Registry & DockerHub
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
 
 env:
   IMAGE_NAME: bdwyertech/image-build-utils
-  DOCKERFILE: Dockerfile_py39
-  TAG: py39
-  LATEST: true
+  DOCKERFILE: Dockerfile_py36
+  TAG: py36
+  LATEST: 'false'
 
 jobs:
   build-and-push-image:
