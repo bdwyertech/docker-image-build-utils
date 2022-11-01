@@ -14,9 +14,6 @@ LABEL org.opencontainers.image.title="image-build-utils" \
 # Update PIP & Install PIPEnv
 RUN python -m pip install --upgrade pip \
     && python -m pip install --upgrade pipenv \
-    && apk add --no-cache --virtual .build-deps libffi-dev build-base \
-    && python -m pip install ansible \
-    && apk del .build-deps \
     && rm -rf ~/.cache/pip
 
 # Update & Install Ruby
