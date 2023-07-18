@@ -1,4 +1,4 @@
-name: Create and publish py38 Docker image to GitHub Container Registry & DockerHub
+name: Create and publish py39 Docker image to GitHub Container Registry & DockerHub
 
 on:
   workflow_dispatch:
@@ -12,9 +12,9 @@ on:
 
 env:
   IMAGE_NAME: bdwyertech/image-build-utils
-  DOCKERFILE: Dockerfile_py38
-  TAG: py38
-  LATEST: 'false'
+  DOCKERFILE: Dockerfile_py310
+  TAG: py310
+  LATEST: true
 
 jobs:
   build-and-push-image:
