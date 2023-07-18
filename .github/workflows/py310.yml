@@ -13,11 +13,12 @@ on:
 env:
   IMAGE_NAME: bdwyertech/image-build-utils
   DOCKERFILE: Dockerfile_py310
-  TAG: py310
-  LATEST: true
 
 jobs:
   build-and-push-image:
+    strategy:
+      matrix:
+        tag: [py310, py310-ansible]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -54,9 +55,9 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ env.LATEST }}
+            latest=${{ matrix.tag == 'py310' }}
           tags: |
-            type=sha,enable=true,priority=100,prefix=${{ env.TAG }}-${{ steps.date.outputs.date }}--,suffix=,format=short
+            type=sha,enable=true,priority=100,prefix=${{ matrix.tag }}-${{ steps.date.outputs.date }}--,suffix=,format=short
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -70,6 +71,6 @@ jobs:
           file: ${{ env.DOCKERFILE }}
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.TAG }}
+            ${{ env.IMAGE_NAME }}:${{ matrix.tag }}
             ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
