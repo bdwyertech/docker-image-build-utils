@@ -71,6 +71,8 @@ jobs:
           context: .
           file: ${{ env.DOCKERFILE }}
           push: true
+          build-args: |
+            DOCKER_TAG=${{ matrix.tag }}
           tags: |
             ${{ env.IMAGE_NAME }}:${{ matrix.tag }}
             ${{ steps.meta.outputs.tags }}
