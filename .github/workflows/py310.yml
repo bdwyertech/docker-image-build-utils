@@ -1,4 +1,4 @@
-name: Create and publish py39 Docker image to GitHub Container Registry & DockerHub
+name: Create and publish py310 Docker image to GitHub Container Registry & DockerHub
 
 on:
   workflow_dispatch:
