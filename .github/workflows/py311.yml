@@ -1,4 +1,4 @@
-name: Create and publish py310 Docker image to GitHub Container Registry & DockerHub
+name: Create and publish py311 Docker image to GitHub Container Registry & DockerHub
 
 on:
   workflow_dispatch:
@@ -12,14 +12,13 @@ on:
 
 env:
   IMAGE_NAME: bdwyertech/image-build-utils
-  DOCKERFILE: Dockerfile_py310
-  LATEST: false
+  DOCKERFILE: Dockerfile_py311
 
 jobs:
   build-and-push-image:
     strategy:
       matrix:
-        tag: [py310, py310-ansible]
+        tag: [py311, py311-ansible]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -56,7 +55,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ env.LATEST }}
+            latest=${{ matrix.tag == 'py311' }}
           tags: |
             type=sha,enable=true,priority=100,prefix=${{ matrix.tag }}-${{ steps.date.outputs.date }}--,suffix=,format=short
       - name: Set up QEMU
