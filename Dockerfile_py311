@@ -29,7 +29,7 @@ RUN apk update && apk upgrade \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf
-RUN apk add --no-cache --virtual .build-deps ruby-dev build-base \
+RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers \
     && gem install berkshelf \
     && apk del .build-deps \
     && rm -rf ~/.gem
