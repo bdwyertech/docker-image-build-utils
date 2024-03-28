@@ -23,6 +23,7 @@ RUN apk update && apk upgrade \
 
 # Install Berkshelf
 RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers \
+    && gem install nori -v 2.6.0 \
     && gem install chef -v 17.10.0 \
     && gem install berkshelf \
     && apk del .build-deps \
