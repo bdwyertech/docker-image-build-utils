@@ -34,5 +34,13 @@ RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers \
     && apk del .build-deps \
     && rm -rf ~/.gem
 
+# Trivy
+ARG TARGETPLATFORM=linux/amd64
+RUN DOCKER_ARCH=$(case ${TARGETPLATFORM} in \
+    "linux/amd64")   echo -e "Linux-64bit" ;; \
+    "linux/arm64")   echo -e "Linux-ARM64" ;; \
+    *)               echo "" ;; esac) \
+    && (curl -sfkL "$(curl -Ls https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -o -E "https://.+?_${DOCKER_ARCH}.tar.gz" -m 1)" | tar zxf - --directory /usr/local/bin)
+
 # Hide Ruby Warnings
 ENV RUBYOPT='-W0'
