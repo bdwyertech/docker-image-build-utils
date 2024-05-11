@@ -1,4 +1,10 @@
+FROM hashicorp/packer:1.10 as packer-plugins
+RUN packer plugins install github.com/bdwyertech/chef \
+    && packer plugins install github.com/hashicorp/amazon \
+    && packer plugins install github.com/hashicorp/ansible
+
 FROM python:3.11-alpine3.18
+COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
 
 ARG BUILD_DATE
 ARG VCS_REF
