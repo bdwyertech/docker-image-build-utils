@@ -22,7 +22,7 @@ RUN apk update && apk upgrade \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf
-RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers \
+RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers libffi-dev \
     && gem install public_suffix -v 5.1.1 \
     && gem install nori -v 2.6.0 \
     && gem install chef -v 17.10.0 \
