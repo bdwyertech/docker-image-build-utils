@@ -26,7 +26,7 @@ RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers \
     && gem install public_suffix -v 5.1.1 \
     && gem install nori -v 2.6.0 \
     && gem install chef -v 17.10.0 \
-    && gem install berkshelf \
+    && gem install -f berkshelf \
     && apk del .build-deps \
     && rm -rf ~/.gem
 
