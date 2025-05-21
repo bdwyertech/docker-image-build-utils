@@ -27,8 +27,6 @@ jobs:
           - py310
           - py310-ansible
           - py39
-          - py38
-          - py37
     runs-on: ubuntu-latest
     permissions:
       contents: read
