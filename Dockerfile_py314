@@ -1,4 +1,11 @@
-FROM python:3.9-alpine3.22
+FROM hashicorp/packer:1.14 AS packer-plugins
+RUN packer plugins install github.com/bdwyertech/chef \
+    && packer plugins install github.com/hashicorp/amazon \
+    && packer plugins install github.com/bdwyertech/amazon \
+    && packer plugins install github.com/hashicorp/ansible
+
+FROM python:3.14-alpine3.22
+COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -16,17 +23,21 @@ RUN python -m pip install --upgrade pip \
     && python -m pip install --upgrade pipenv \
     && rm -rf ~/.cache/pip
 
+ARG DOCKER_TAG="py314"
+RUN if [ -z "${DOCKER_TAG##*ansible*}" ] ; then \
+    apk add --no-cache openssh-client \
+    && python -m pip install ansible jmespath \
+    && rm -rf ~/.cache/pip \
+    ; fi
+
 # Update & Install Ruby
 RUN apk update && apk upgrade \
     && apk add --no-cache bash ca-certificates curl git ruby ruby-etc ruby-json wget \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf
-RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers libffi-dev \
-    && gem install public_suffix -v 5.1.1 \
-    && gem install nori -v 2.6.0 \
-    && gem install chef -v 17.10.0 \
-    && gem install -f berkshelf \
+RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers \
+    && gem install berkshelf \
     && apk del .build-deps \
     && rm -rf ~/.gem
 
@@ -40,3 +51,12 @@ RUN DOCKER_ARCH=$(case ${TARGETPLATFORM} in \
 
 # Hide Ruby Warnings
 ENV RUBYOPT='-W0'
+
+# (curl -sfL "$(curl -Ls https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -o -E "https://.+?_Linux-64bit.tar.gz" -m 1)" | tar zxf - --directory /usr/local/bin)
+
+# curl -vkfL "https://github.com/aquasecurity/trivy/releases/download/v0.50.1/trivy_0.50.1_Linux-64bit.tar.gz" | tar zxf - --directory /usr/local/bin
+
+
+# packer plugins install github.com/bdwyertech/chef
+
+# .config/packer/plugins

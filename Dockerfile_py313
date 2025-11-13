@@ -4,7 +4,7 @@ RUN packer plugins install github.com/bdwyertech/chef \
     && packer plugins install github.com/bdwyertech/amazon \
     && packer plugins install github.com/hashicorp/ansible
 
-FROM python:3.13-alpine3.21
+FROM python:3.13-alpine3.22
 COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
 
 ARG BUILD_DATE

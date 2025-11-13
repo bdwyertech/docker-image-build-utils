@@ -18,6 +18,8 @@ jobs:
     strategy:
       matrix:
         tag:
+          - py314-ansible
+          - py314
           - py313-ansible
           - py313
           - py312-ansible
