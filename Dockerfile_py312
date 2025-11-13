@@ -4,7 +4,7 @@ RUN packer plugins install github.com/bdwyertech/chef \
     && packer plugins install github.com/bdwyertech/amazon \
     && packer plugins install github.com/hashicorp/ansible
 
-FROM python:3.12-alpine3.22
+FROM python:3.12-alpine3.21
 COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
 
 ARG BUILD_DATE
@@ -43,11 +43,12 @@ RUN apk add --no-cache --virtual .build-deps ruby-dev build-base linux-headers l
 
 # Trivy
 ARG TARGETPLATFORM=linux/amd64
-RUN DOCKER_ARCH=$(case ${TARGETPLATFORM} in \
+RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN \
+    DOCKER_ARCH=$(case ${TARGETPLATFORM} in \
     "linux/amd64")   echo -e "Linux-64bit" ;; \
     "linux/arm64")   echo -e "Linux-ARM64" ;; \
     *)               echo "" ;; esac) \
-    && (curl -sfkL "$(curl -Ls https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -o -E "https://.+?_${DOCKER_ARCH}.tar.gz" -m 1)" | tar zxf - --directory /usr/local/bin)
+    && (curl -H "Authorization: Bearer $GITHUB_TOKEN" -sfkL "$(curl -Ls https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -o -E "https://.+?_${DOCKER_ARCH}.tar.gz" -m 1)" | tar zxf - --directory /usr/local/bin)
 
 # Hide Ruby Warnings
 ENV RUBYOPT='-W0'
