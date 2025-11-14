@@ -28,7 +28,6 @@ jobs:
           - py311-ansible
           - py310
           - py310-ansible
-          - py39
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -71,7 +70,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ matrix.tag == 'py313' }}
+            latest=${{ matrix.tag == 'py314' }}
           tags: |
             type=sha,enable=true,priority=100,prefix=${{ matrix.tag }}-${{ steps.params.outputs.date }}--,suffix=,format=short
       - name: Set up QEMU
