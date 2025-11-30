@@ -1,0 +1,92 @@
+version: '3'
+
+vars:
+  default_tag: 'local/python'
+  default_py: '314'
+  default_platforms: 'linux/amd64'
+
+tasks:
+  buildx-setup:
+    desc: 'Create/use a buildx builder and register QEMU (for cross-builds)'
+    cmds:
+      - docker run --rm --privileged tonistiigi/binfmt:latest --install all || true
+      - |
+        if ! docker buildx inspect multiarch-builder >/dev/null 2>&1; then
+          docker buildx create --name multiarch-builder --use
+        else
+          docker buildx use multiarch-builder
+        fi
+      - docker buildx inspect --bootstrap
+
+  list:
+    desc: 'List available Dockerfiles in the repo'
+    cmds:
+      - ls -1 Dockerfile_py* || true
+
+  build:
+    desc: 'Build local image from a Dockerfile (default: PY={{.default_py}})'
+    vars:
+      PY: '{{.default_py}}'
+      DOCKERFILE: 'Dockerfile_py{{.PY}}'
+      TAG: '{{.default_tag}}:py{{.PY}}'
+      PLATFORMS: '{{.default_platforms}}'
+    cmds:
+      - |
+        if [ ! -f {{.DOCKERFILE}} ]; then
+          echo 'Dockerfile not found: {{.DOCKERFILE}}'
+          exit 1
+        fi
+      - "echo 'Building {{.TAG}} from {{.DOCKERFILE}} (platform: {{.PLATFORMS}})'"
+      - 'docker build -f {{.DOCKERFILE}} -t {{.TAG}} .'
+
+  build-arm64:
+    desc: 'Build for arm64 using buildx (loads image locally). Set PY (e.g. 310, 311, 314)'
+    deps: [buildx-setup]
+    vars:
+      PY: '{{.default_py}}'
+      DOCKERFILE: 'Dockerfile_py{{.PY}}'
+      TAG: '{{.default_tag}}:py{{.PY}}-arm64'
+    cmds:
+      - |
+        if [ ! -f {{.DOCKERFILE}} ]; then
+          echo 'Dockerfile not found: {{.DOCKERFILE}}'
+          exit 1
+        fi
+      - "echo 'Building {{.TAG}} for linux/arm64 from {{.DOCKERFILE}}'"
+      - 'docker buildx build --platform linux/arm64 -f {{.DOCKERFILE}} -t {{.TAG}} --load .'
+
+  build-multiarch:
+    desc: 'Build multi-arch image (amd64 + arm64) and push to registry. Provide TAG for push.'
+    deps: [buildx-setup]
+    vars:
+      PY: '{{.default_py}}'
+      DOCKERFILE: 'Dockerfile_py{{.PY}}'
+      PLATFORMS: 'linux/amd64,linux/arm64'
+      TAG: '{{.default_tag}}:py{{.PY}}'
+    cmds:
+      - |
+        if [ ! -f {{.DOCKERFILE}} ]; then
+          echo 'Dockerfile not found: {{.DOCKERFILE}}'
+          exit 1
+        fi
+      - |
+        if [ '{{.TAG}}' = '{{.default_tag}}:py{{.PY}}' ]; then
+          echo 'WARNING: using default tag (not pushing). Set TAG to your registry to push.'
+        fi
+      - "echo 'Building and pushing {{.TAG}} for {{.PLATFORMS}} from {{.DOCKERFILE}}'"
+      - 'docker buildx build --platform {{.PLATFORMS}} -f {{.DOCKERFILE}} -t {{.TAG}} --push .'
+
+  help:
+    desc: 'Show quick examples'
+    cmds:
+      - echo 'Examples (zsh):'
+      - echo ' # Build local amd64 image (uses Dockerfile_py314 by default):'
+      - echo '  task build'
+      - echo ' # Build local image for a specific Python Dockerfile (e.g. py311):'
+      - echo '  task build PY=311'
+      - echo ' # Build and load arm64 image locally:'
+      - echo '  task build-arm64 PY=314'
+      - echo ' # Create buildx builder (once):'
+      - echo '  task buildx-setup'
+      - echo " # Build and push multi-arch (set TAG to something like 'ghcr.io/you/repo:tag')"
+      - echo '  task build-multiarch PY=314 TAG=ghcr.io/youruser/python:py314'
