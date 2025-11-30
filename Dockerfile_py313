@@ -48,7 +48,8 @@ RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN \
     "linux/amd64")   echo -e "Linux-64bit" ;; \
     "linux/arm64")   echo -e "Linux-ARM64" ;; \
     *)               echo "" ;; esac) \
-    && (curl -H "Authorization: Bearer $GITHUB_TOKEN" -sfkL "$(curl -H 'Authorization: Bearer '"$GITHUB_TOKEN" -Ls https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -o -E 'https://.+?_'"${DOCKER_ARCH}"'.tar.gz' -m 1)" | tar zxf - --directory /usr/local/bin)
+    && RELEASE_URL=$(curl -H "Authorization: Bearer $GITHUB_TOKEN" -sSL "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep -o -E "https://.+?_${DOCKER_ARCH}.tar.gz" -m 1) \
+    && curl -H "Authorization: Bearer $GITHUB_TOKEN" -sfkL "$RELEASE_URL" | tar zxf - --directory /usr/local/bin
 
 # Hide Ruby Warnings
 ENV RUBYOPT='-W0'
