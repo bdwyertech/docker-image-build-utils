@@ -78,9 +78,8 @@ tasks:
 
   update-qemu:
     cmds:
-      - docker pull tonistiigi/binfmt:latest
-      - docker tag tonistiigi/binfmt:latest ghcr.io/bdwyertech/dhub/binfmt:latest
-      - docker push ghcr.io/bdwyertech/dhub/binfmt:latest
+      - skopeo login ghcr.io # use API token as password
+      - skopeo copy docker://tonistiigi/binfmt:latest docker://ghcr.io/bdwyertech/dhub/binfmt:latest --multi-arch all
 
   help:
     desc: 'Show quick examples'
