@@ -1,10 +1,11 @@
-FROM hashicorp/packer:1.10 AS packer-plugins
-RUN packer plugins install github.com/bdwyertech/chef \
+FROM hashicorp/packer:light AS packer-plugins
+RUN --mount=type=secret,id=GITHUB_TOKEN,env=PACKER_GITHUB_API_TOKEN \
+    packer plugins install github.com/bdwyertech/chef \
     && packer plugins install github.com/hashicorp/amazon \
-    && packer plugins install github.com/bdwyertech/amazon \
+    && packer plugins install github.com/bdwyertech/aws \
     && packer plugins install github.com/hashicorp/ansible
 
-FROM python:3.12-alpine3.21
+FROM python:3.12-alpine3.23
 COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
 
 ARG BUILD_DATE
@@ -32,7 +33,7 @@ RUN if [ -z "${DOCKER_TAG##*ansible*}" ] ; then \
 
 # Update & Install Ruby
 RUN apk update && apk upgrade \
-    && apk add --no-cache bash ca-certificates curl git ruby ruby-etc ruby-json wget \
+    && apk add --no-cache bash ca-certificates curl git ruby wget \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf

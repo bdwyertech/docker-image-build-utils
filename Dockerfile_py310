@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.21
+FROM python:3.10-alpine3.23
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -25,7 +25,7 @@ RUN if [ -z "${DOCKER_TAG##*ansible*}" ] ; then \
 
 # Update & Install Ruby
 RUN apk update && apk upgrade \
-    && apk add --no-cache bash ca-certificates curl git ruby ruby-etc ruby-json wget \
+    && apk add --no-cache bash ca-certificates curl git ruby wget \
     && echo 'gem: --no-document' > /etc/gemrc
 
 # Install Berkshelf
