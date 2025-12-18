@@ -1,3 +1,8 @@
+FROM golang:1.25-alpine AS packer-proxy-init
+WORKDIR /go/src/
+COPY packer-proxy-init/ .
+RUN GOFLAGS=-mod=vendor CGO_ENABLED=0 go build -ldflags="-s -w" .
+
 FROM hashicorp/packer:light AS packer-plugins
 RUN --mount=type=secret,id=GITHUB_TOKEN,env=PACKER_GITHUB_API_TOKEN \
     packer plugins install github.com/bdwyertech/chef \
@@ -7,6 +12,8 @@ RUN --mount=type=secret,id=GITHUB_TOKEN,env=PACKER_GITHUB_API_TOKEN \
 
 FROM python:3.11-alpine3.23
 COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
+COPY --from=packer-proxy-init /go/src/packer-proxy-init /usr/local/bin/
+RUN chmod 4755 /usr/local/bin/packer-proxy-init
 
 ARG BUILD_DATE
 ARG VCS_REF
