@@ -76,6 +76,12 @@ tasks:
       - "echo 'Building and pushing {{.TAG}} for {{.PLATFORMS}} from {{.DOCKERFILE}}'"
       - 'docker buildx build --platform {{.PLATFORMS}} -f {{.DOCKERFILE}} -t {{.TAG}} --push .'
 
+  update-qemu:
+    cmds:
+      - docker pull tonistiigi/binfmt:latest
+      - docker tag tonistiigi/binfmt:latest ghcr.io/bdwyertech/dhub/binfmt:latest
+      - docker push ghcr.io/bdwyertech/dhub/binfmt:latest
+
   help:
     desc: 'Show quick examples'
     cmds:
