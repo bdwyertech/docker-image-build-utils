@@ -75,6 +75,7 @@ jobs:
           flavor: |
             latest=${{ matrix.tag == 'py314' }}
           tags: |
+            type=raw,value=${{ matrix.tag }}
             type=sha,enable=true,priority=100,prefix=${{ matrix.tag }}-${{ steps.params.outputs.date }}--,suffix=,format=short
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -95,9 +96,7 @@ jobs:
             DOCKER_TAG=${{ matrix.tag }}
           secrets: |
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ matrix.tag }}
-            ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: true
           sbom: true
