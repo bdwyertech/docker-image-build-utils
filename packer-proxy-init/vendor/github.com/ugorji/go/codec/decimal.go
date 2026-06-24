@@ -8,6 +8,19 @@ import (
 	"strconv"
 )
 
+type readFloatResult struct {
+	mantissa uint64
+	exp      int8
+	neg      bool
+	trunc    bool
+	bad      bool // bad decimal string
+	hardexp  bool // exponent is hard to handle (> 2 digits, etc)
+	ok       bool
+	// sawdot   bool
+	// sawexp   bool
+	//_ [2]bool // padding
+}
+
 // Per go spec, floats are represented in memory as
 // IEEE single or double precision floating point values.
 //
@@ -132,12 +145,20 @@ var fi64 = floatinfo{52, 22, 15, false, 1<<52 - 1}
 var fi64u = floatinfo{0, 19, 0, true, fUint64Cutoff}
 
 func noFrac64(fbits uint64) bool {
+	if fbits == 0 {
+		return true
+	}
+
 	exp := uint64(fbits>>52)&0x7FF - 1023 // uint(x>>shift)&mask - bias
 	// clear top 12+e bits, the integer part; if the rest is 0, then no fraction.
 	return exp < 52 && fbits<<(12+exp) == 0 // means there's no fractional part
 }
 
 func noFrac32(fbits uint32) bool {
+	if fbits == 0 {
+		return true
+	}
+
 	exp := uint32(fbits>>23)&0xFF - 127 // uint(x>>shift)&mask - bias
 	// clear top 9+e bits, the integer part; if the rest is 0, then no fraction.
 	return exp < 23 && fbits<<(9+exp) == 0 // means there's no fractional part
@@ -226,6 +247,10 @@ func parseFloat64_custom(b []byte) (f float64, err error) {
 }
 
 func parseUint64_simple(b []byte) (n uint64, ok bool) {
+	if len(b) > 1 && b[0] == '0' { // punt on numbers with leading zeros
+		return
+	}
+
 	var i int
 	var n1 uint64
 	var c uint8
@@ -348,19 +373,6 @@ func parseNumber(b []byte, z *fauxUnion, preferSignedInt bool) (err error) {
 	return
 }
 
-type readFloatResult struct {
-	mantissa uint64
-	exp      int8
-	neg      bool
-	trunc    bool
-	bad      bool // bad decimal string
-	hardexp  bool // exponent is hard to handle (> 2 digits, etc)
-	ok       bool
-	// sawdot   bool
-	// sawexp   bool
-	//_ [2]bool // padding
-}
-
 func readFloat(s []byte, y floatinfo) (r readFloatResult) {
 	var i uint // uint, so that we eliminate bounds checking
 	var slen = uint(len(s))
@@ -376,12 +388,22 @@ func readFloat(s []byte, y floatinfo) (r readFloatResult) {
 		i++
 	}
 
-	// we considered punting early if string has length > maxMantDigits, but this doesn't account
+	// considered punting early if string has length > maxMantDigits, but doesn't account
 	// for trailing 0's e.g. 700000000000000000000 can be encoded exactly as it is 7e20
 
 	var nd, ndMant, dp int8
 	var sawdot, sawexp bool
 	var xu uint64
+
+	if i+1 < slen && s[i] == '0' {
+		switch s[i+1] {
+		case '.', 'e', 'E':
+			// ok
+		default:
+			r.bad = true
+			return
+		}
+	}
 
 LOOP:
 	for ; i < slen; i++ {
@@ -486,6 +508,7 @@ LOOP:
 		}
 	}
 
+	_ = i // no-op
 	r.ok = true
 	return
 }

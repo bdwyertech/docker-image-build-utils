@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mitchellh/mapstructure"
+	"github.com/go-viper/mapstructure/v2"
 )
 
 const (
@@ -28,22 +28,25 @@ const (
 	ExportedServices   string = "exported-services"
 	SamenessGroup      string = "sameness-group"
 	RateLimitIPConfig  string = "control-plane-request-limit"
+	RateLimit          string = "rate-limit"
 
-	ProxyConfigGlobal string = "global"
-	MeshConfigMesh    string = "mesh"
-	APIGateway        string = "api-gateway"
-	TCPRoute          string = "tcp-route"
-	InlineCertificate string = "inline-certificate"
-	HTTPRoute         string = "http-route"
-	JWTProvider       string = "jwt-provider"
+	ProxyConfigGlobal     string = "global"
+	MeshConfigMesh        string = "mesh"
+	APIGateway            string = "api-gateway"
+	TCPRoute              string = "tcp-route"
+	FileSystemCertificate string = "file-system-certificate"
+	InlineCertificate     string = "inline-certificate"
+	HTTPRoute             string = "http-route"
+	JWTProvider           string = "jwt-provider"
 )
 
 const (
-	BuiltinAWSLambdaExtension        string = "builtin/aws/lambda"
-	BuiltinExtAuthzExtension         string = "builtin/ext-authz"
-	BuiltinLuaExtension              string = "builtin/lua"
-	BuiltinPropertyOverrideExtension string = "builtin/property-override"
-	BuiltinWasmExtension             string = "builtin/wasm"
+	BuiltinAWSLambdaExtension         string = "builtin/aws/lambda"
+	BuiltinExtAuthzExtension          string = "builtin/ext-authz"
+	BuiltinLuaExtension               string = "builtin/lua"
+	BuiltinOTELAccessLoggingExtension string = "builtin/otel-access-logging"
+	BuiltinPropertyOverrideExtension  string = "builtin/property-override"
+	BuiltinWasmExtension              string = "builtin/wasm"
 	// BuiltinValidateExtension should not be exposed directly or accepted as a valid configured
 	// extension type, as it is only used indirectly via troubleshooting tools. It is included here
 	// for common reference alongside other builtin extensions.
@@ -285,6 +288,19 @@ type PassiveHealthCheck struct {
 	// This setting can be used to disable ejection or to ramp it up slowly.
 	EnforcingConsecutive5xx *uint32 `json:",omitempty" alias:"enforcing_consecutive_5xx"`
 
+	// EnforcingConsecutiveGatewayFailure is the % chance that a host will be actually ejected
+	// when an outlier status is detected through consecutive gateway failures(codes-502, 503, 504).
+	// This setting can be used to disable ejection or to ramp it up slowly. Defaults to 0.
+	EnforcingConsecutiveGatewayFailure *uint32 `json:",omitempty" alias:"enforcing_consecutive_gateway_failure"`
+
+	// Consecutive5xx is the number of consecutive 5xx responses that trigger outlier detection.
+	// If not set, defaults to 5. Setting this overrides MaxFailures for 5xx detection.
+	Consecutive5xx *uint32 `json:",omitempty" alias:"consecutive_5xx"`
+
+	// ConsecutiveGatewayFailure is the number of consecutive gateway failures (502, 503, 504)
+	// that trigger outlier detection. If not set, defaults to 0 (disabled).
+	ConsecutiveGatewayFailure *uint32 `json:",omitempty" alias:"consecutive_gateway_failure"`
+
 	// The maximum % of an upstream cluster that can be ejected due to outlier detection.
 	// Defaults to 10% but will eject at least one host regardless of the value.
 	MaxEjectionPercent *uint32 `json:",omitempty" alias:"max_ejection_percent"`
@@ -314,6 +330,48 @@ type UpstreamLimits struct {
 	MaxConcurrentRequests *int `alias:"max_concurrent_requests"`
 }
 
+// RateLimits is rate limiting configuration that is applied to
+// inbound traffic for a service.
+// Rate limiting is a Consul enterprise feature.
+type RateLimits struct {
+	InstanceLevel InstanceLevelRateLimits `alias:"instance_level"`
+}
+
+// InstanceLevelRateLimits represents rate limit configuration
+// that are applied per service instance.
+type InstanceLevelRateLimits struct {
+	// RequestsPerSecond is the average number of requests per second that can be
+	// made without being throttled. This field is required if RequestsMaxBurst
+	// is set. The allowed number of requests may exceed RequestsPerSecond up to
+	// the value specified in RequestsMaxBurst.
+	//
+	// Internally, this is the refill rate of the token bucket used for rate limiting.
+	RequestsPerSecond int `alias:"requests_per_second"`
+
+	// RequestsMaxBurst is the maximum number of requests that can be sent
+	// in a burst. Should be equal to or greater than RequestsPerSecond.
+	// If unset, defaults to RequestsPerSecond.
+	//
+	// Internally, this is the maximum size of the token bucket used for rate limiting.
+	RequestsMaxBurst int `alias:"requests_max_burst"`
+
+	// Routes is a list of rate limits applied to specific routes.
+	// For a given request, the first matching route will be applied, if any
+	// Overrides any top-level configuration.
+	Routes []InstanceLevelRouteRateLimits
+}
+
+// InstanceLevelRouteRateLimits represents rate limit configuration
+// applied to a route matching one of PathExact/PathPrefix/PathRegex.
+type InstanceLevelRouteRateLimits struct {
+	PathExact  string `alias:"path_exact"`
+	PathPrefix string `alias:"path_prefix"`
+	PathRegex  string `alias:"path_regex"`
+
+	RequestsPerSecond int `alias:"requests_per_second"`
+	RequestsMaxBurst  int `alias:"requests_max_burst"`
+}
+
 type ServiceConfigEntry struct {
 	Kind                      string
 	Name                      string
@@ -332,10 +390,12 @@ type ServiceConfigEntry struct {
 	LocalConnectTimeoutMs     int                     `json:",omitempty" alias:"local_connect_timeout_ms"`
 	LocalRequestTimeoutMs     int                     `json:",omitempty" alias:"local_request_timeout_ms"`
 	BalanceInboundConnections string                  `json:",omitempty" alias:"balance_inbound_connections"`
+	RateLimits                *RateLimits             `json:",omitempty" alias:"rate_limits"`
 	EnvoyExtensions           []EnvoyExtension        `json:",omitempty" alias:"envoy_extensions"`
 	Meta                      map[string]string       `json:",omitempty"`
 	CreateIndex               uint64
 	ModifyIndex               uint64
+	MaxRequestHeadersKB       *uint32 `json:",omitempty"`
 }
 
 func (s *ServiceConfigEntry) GetKind() string            { return s.Kind }
@@ -403,12 +463,16 @@ func makeConfigEntry(kind, name string) (ConfigEntry, error) {
 		return &APIGatewayConfigEntry{Kind: kind, Name: name}, nil
 	case TCPRoute:
 		return &TCPRouteConfigEntry{Kind: kind, Name: name}, nil
+	case FileSystemCertificate:
+		return &FileSystemCertificateConfigEntry{Kind: kind, Name: name}, nil
 	case InlineCertificate:
 		return &InlineCertificateConfigEntry{Kind: kind, Name: name}, nil
 	case HTTPRoute:
 		return &HTTPRouteConfigEntry{Kind: kind, Name: name}, nil
 	case RateLimitIPConfig:
 		return &RateLimitIPConfigEntry{Kind: kind, Name: name}, nil
+	case RateLimit:
+		return &GlobalRateLimitConfigEntry{Kind: kind, Name: name}, nil
 	case JWTProvider:
 		return &JWTProviderConfigEntry{Kind: kind, Name: name}, nil
 	default:

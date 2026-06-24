@@ -195,6 +195,9 @@ type TerminatingGatewayConfigEntry struct {
 type LinkedService struct {
 	// Referencing other partitions is not supported.
 
+	//DisableAutoHostRewrite disables terminating gateways auto host rewrite feature when set to true.
+	DisableAutoHostRewrite bool `json:",omitempty"`
+
 	// Namespace is where the service is registered.
 	Namespace string `json:",omitempty"`
 
@@ -235,11 +238,18 @@ type APIGatewayConfigEntry struct {
 	// service. This should match the name provided in the service definition.
 	Name string
 
+	// TLS holds default TLS configuration for API gateway listeners. Listener
+	// TLS settings may override these defaults.
+	TLS GatewayTLSConfig
+
 	Meta map[string]string `json:",omitempty"`
 
 	// Listeners is the set of listener configuration to which an API Gateway
 	// might bind.
 	Listeners []APIGatewayListener
+
+	// Defaults contains default upstream limits for all route destination services.
+	Defaults *UpstreamLimits `json:",omitempty"`
 	// Status is the asynchronous status which an APIGateway propagates to the user.
 	Status ConfigEntryStatus
 
@@ -284,6 +294,14 @@ type APIGatewayListener struct {
 	Protocol string
 	// TLS is the TLS settings for the listener.
 	TLS APIGatewayTLSConfiguration
+	// Override is the policy that overrides all other policy and route specific configuration
+	Override *APIGatewayPolicy `json:",omitempty"`
+	// Default is the policy that is the default for the listener and route, routes can override this behavior
+	Default *APIGatewayPolicy `json:",omitempty"`
+
+	// MaxRequestHeadersKB configures the maximum size in kilobytes for request headers
+	// sent from downstream clients to upstream services. If not set, uses Envoy's default.
+	MaxRequestHeadersKB *uint32 `json:",omitempty"`
 }
 
 // APIGatewayTLSConfiguration specifies the configuration of a listener’s
@@ -292,6 +310,8 @@ type APIGatewayTLSConfiguration struct {
 	// Certificates is a set of references to certificates
 	// that a gateway listener uses for TLS termination.
 	Certificates []ResourceReference
+	// SDS allows configuring TLS certificate from an SDS service.
+	SDS *GatewayTLSSDSConfig `json:",omitempty"`
 	// MaxVersion is the maximum TLS version that the listener
 	// should support.
 	MaxVersion string `json:",omitempty" alias:"tls_max_version"`
@@ -301,4 +321,40 @@ type APIGatewayTLSConfiguration struct {
 	// Define a subset of cipher suites to restrict
 	// Only applicable to connections negotiated via TLS 1.2 or earlier
 	CipherSuites []string `json:",omitempty" alias:"cipher_suites"`
+}
+
+// APIGatewayPolicy holds the policy that configures the gateway listener, this is used in the `Override` and `Default` fields of a listener
+type APIGatewayPolicy struct {
+	// JWT holds the JWT configuration for the Listener
+	JWT *APIGatewayJWTRequirement `json:",omitempty"`
+}
+
+// APIGatewayJWTRequirement holds the list of JWT providers to be verified against
+type APIGatewayJWTRequirement struct {
+	// Providers is a list of providers to consider when verifying a JWT.
+	Providers []*APIGatewayJWTProvider `json:",omitempty"`
+}
+
+// APIGatewayJWTProvider holds the provider and claim verification information
+type APIGatewayJWTProvider struct {
+	// Name is the name of the JWT provider. There MUST be a corresponding
+	// "jwt-provider" config entry with this name.
+	Name string `json:",omitempty"`
+
+	// VerifyClaims is a list of additional claims to verify in a JWT's payload.
+	VerifyClaims []*APIGatewayJWTClaimVerification `json:",omitempty" alias:"verify_claims"`
+}
+
+// APIGatewayJWTClaimVerification holds the actual claim information to be verified
+type APIGatewayJWTClaimVerification struct {
+	// Path is the path to the claim in the token JSON.
+	Path []string `json:",omitempty"`
+
+	// Value is the expected value at the given path:
+	// - If the type at the path is a list then we verify
+	//   that this value is contained in the list.
+	//
+	// - If the type at the path is a string then we verify
+	//   that this value matches.
+	Value string `json:",omitempty"`
 }
