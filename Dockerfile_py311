@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN,env=PACKER_GITHUB_API_TOKEN \
     && packer plugins install github.com/bdwyertech/aws \
     && packer plugins install github.com/hashicorp/ansible
 
-FROM python:3.11-alpine3.24
+FROM python:3.14-alpine3.24
 COPY --from=packer-plugins /root/.config/packer/plugins /root/.config/packer/plugins
 COPY --from=packer-proxy-init /go/src/packer-proxy-init /usr/local/bin/
 RUN chmod 4755 /usr/local/bin/packer-proxy-init
