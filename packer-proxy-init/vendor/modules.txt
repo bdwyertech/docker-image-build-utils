@@ -368,8 +368,8 @@ github.com/hashicorp/packer/packer/plugin-getter
 github.com/hashicorp/packer/packer/plugin-getter/github
 github.com/hashicorp/packer/provisioner/hcp-sbom
 github.com/hashicorp/packer/version
-# github.com/hashicorp/packer-plugin-sdk v0.6.9
-## explicit; go 1.25.10
+# github.com/hashicorp/packer-plugin-sdk v0.6.10
+## explicit; go 1.25.11
 github.com/hashicorp/packer-plugin-sdk/common
 github.com/hashicorp/packer-plugin-sdk/didyoumean
 github.com/hashicorp/packer-plugin-sdk/guestexec
