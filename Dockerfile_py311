@@ -1,4 +1,4 @@
-FROM golang:1.26-alpine AS packer-proxy-init
+FROM golang:1.27-alpine AS packer-proxy-init
 WORKDIR /go/src/
 COPY packer-proxy-init/ .
 RUN GOFLAGS=-mod=vendor CGO_ENABLED=0 go build -ldflags="-s -w" .
