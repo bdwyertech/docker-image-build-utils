@@ -19,6 +19,11 @@ github.com/apparentlymart/go-textseg/v13/textseg
 # github.com/apparentlymart/go-textseg/v15 v15.0.0
 ## explicit; go 1.16
 github.com/apparentlymart/go-textseg/v15/textseg
+# github.com/apparentlymart/go-textseg/v17 v17.0.1
+## explicit; go 1.25
+github.com/apparentlymart/go-textseg/v17/textseg
+github.com/apparentlymart/go-textseg/v17/textseg/internal/charprops
+github.com/apparentlymart/go-textseg/v17/textseg/internal/machine
 # github.com/armon/go-metrics v0.4.1
 ## explicit; go 1.12
 github.com/armon/go-metrics
@@ -338,8 +343,8 @@ github.com/hashicorp/hcl/hcl/token
 github.com/hashicorp/hcl/json/parser
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/hashicorp/hcl/v2 v2.24.0
-## explicit; go 1.23.0
+# github.com/hashicorp/hcl/v2 v2.25.0
+## explicit; go 1.25.0
 github.com/hashicorp/hcl/v2
 github.com/hashicorp/hcl/v2/ext/customdecode
 github.com/hashicorp/hcl/v2/ext/dynblock
@@ -350,6 +355,7 @@ github.com/hashicorp/hcl/v2/hcldec
 github.com/hashicorp/hcl/v2/hclparse
 github.com/hashicorp/hcl/v2/hclsyntax
 github.com/hashicorp/hcl/v2/hclwrite
+github.com/hashicorp/hcl/v2/internal/unicodeutil
 github.com/hashicorp/hcl/v2/json
 # github.com/hashicorp/hcp-sdk-go v0.173.0
 ## explicit; go 1.23.0
@@ -476,7 +482,7 @@ github.com/vmihailenco/msgpack/v5/msgpcode
 github.com/vmihailenco/tagparser/v2
 github.com/vmihailenco/tagparser/v2/internal
 github.com/vmihailenco/tagparser/v2/internal/parser
-# github.com/zclconf/go-cty v1.17.0 => github.com/nywilken/go-cty v1.13.3
+# github.com/zclconf/go-cty v1.19.0 => github.com/nywilken/go-cty v1.13.3
 ## explicit; go 1.18
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert
