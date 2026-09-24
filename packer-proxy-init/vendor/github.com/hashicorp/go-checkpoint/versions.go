@@ -1,3 +1,6 @@
+// Copyright IBM Corp. 2014, 2025
+// SPDX-License-Identifier: MPL-2.0
+
 package checkpoint
 
 import (
@@ -75,10 +78,12 @@ func Versions(p *VersionsParams) (*VersionsResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Unknown status: %d", resp.StatusCode)
+		return nil, fmt.Errorf("unknown status: %d", resp.StatusCode)
 	}
 
 	result := &VersionsResponse{}

@@ -1,3 +1,6 @@
+// Copyright IBM Corp. 2014, 2025
+// SPDX-License-Identifier: MPL-2.0
+
 package checkpoint
 
 import (
@@ -70,7 +73,7 @@ func Report(ctx context.Context, r *ReportParams) error {
 		return err
 	}
 	if resp.StatusCode != 201 {
-		return fmt.Errorf("Unknown status: %d", resp.StatusCode)
+		return fmt.Errorf("unknown status: %d", resp.StatusCode)
 	}
 
 	return nil
