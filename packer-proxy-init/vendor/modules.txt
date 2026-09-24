@@ -22,8 +22,6 @@ github.com/apparentlymart/go-textseg/v15/textseg
 # github.com/armon/go-metrics v0.4.1
 ## explicit; go 1.12
 github.com/armon/go-metrics
-# github.com/aws/aws-sdk-go v1.55.8
-## explicit; go 1.19
 # github.com/aws/aws-sdk-go-v2 v1.42.0
 ## explicit; go 1.24
 github.com/aws/aws-sdk-go-v2/aws
@@ -247,6 +245,8 @@ github.com/gobwas/glob/syntax/ast
 github.com/gobwas/glob/syntax/lexer
 github.com/gobwas/glob/util/runes
 github.com/gobwas/glob/util/strings
+# github.com/google/btree v1.1.3
+## explicit; go 1.18
 # github.com/google/go-cmp v0.7.0
 ## explicit; go 1.21
 github.com/google/go-cmp/cmp
@@ -254,9 +254,9 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/go-github/v33 v33.0.1-0.20210113204525-9318e629ec69
-## explicit; go 1.15
-github.com/google/go-github/v33/github
+# github.com/google/go-github/v75 v75.0.0
+## explicit; go 1.24.0
+github.com/google/go-github/v75/github
 # github.com/google/go-querystring v1.2.0
 ## explicit; go 1.13
 github.com/google/go-querystring/query
@@ -269,22 +269,22 @@ github.com/hashicorp/consul/api
 # github.com/hashicorp/errwrap v1.1.0
 ## explicit
 github.com/hashicorp/errwrap
-# github.com/hashicorp/go-checkpoint v0.5.0
-## explicit
+# github.com/hashicorp/go-checkpoint v0.5.1-0.20260522084958-784cec078f5b
+## explicit; go 1.23.0
 github.com/hashicorp/go-checkpoint
 # github.com/hashicorp/go-cleanhttp v0.5.2
 ## explicit; go 1.13
 github.com/hashicorp/go-cleanhttp
-# github.com/hashicorp/go-cty-funcs v0.1.0
-## explicit; go 1.24.0
+# github.com/hashicorp/go-cty-funcs v0.1.1-0.20260703063543-3af2ddd1aaea
+## explicit; go 1.25.0
 github.com/hashicorp/go-cty-funcs/cidr
 github.com/hashicorp/go-cty-funcs/collection
 github.com/hashicorp/go-cty-funcs/crypto
 github.com/hashicorp/go-cty-funcs/encoding
 github.com/hashicorp/go-cty-funcs/filesystem
 github.com/hashicorp/go-cty-funcs/uuid
-# github.com/hashicorp/go-getter/v2 v2.2.3
-## explicit; go 1.19
+# github.com/hashicorp/go-getter/v2 v2.2.4
+## explicit; go 1.26.8
 github.com/hashicorp/go-getter/v2
 github.com/hashicorp/go-getter/v2/helper/url
 # github.com/hashicorp/go-hclog v1.6.3
@@ -351,12 +351,12 @@ github.com/hashicorp/hcl/v2/hclparse
 github.com/hashicorp/hcl/v2/hclsyntax
 github.com/hashicorp/hcl/v2/hclwrite
 github.com/hashicorp/hcl/v2/json
-# github.com/hashicorp/hcp-sdk-go v0.173.0
+# github.com/hashicorp/hcp-sdk-go v0.175.0
 ## explicit; go 1.23.0
 github.com/hashicorp/hcp-sdk-go/clients/cloud-packer-service/stable/2023-01-01/models
 github.com/hashicorp/hcp-sdk-go/clients/cloud-shared/v1/models
-# github.com/hashicorp/packer v1.15.4
-## explicit; go 1.25.11
+# github.com/hashicorp/packer v1.16.1
+## explicit; go 1.26.8
 github.com/hashicorp/packer/hcl2template
 github.com/hashicorp/packer/hcl2template/addrs
 github.com/hashicorp/packer/hcl2template/function
@@ -368,8 +368,8 @@ github.com/hashicorp/packer/packer/plugin-getter
 github.com/hashicorp/packer/packer/plugin-getter/github
 github.com/hashicorp/packer/provisioner/hcp-sbom
 github.com/hashicorp/packer/version
-# github.com/hashicorp/packer-plugin-sdk v0.6.10
-## explicit; go 1.25.11
+# github.com/hashicorp/packer-plugin-sdk v0.6.11
+## explicit; go 1.26.8
 github.com/hashicorp/packer-plugin-sdk/common
 github.com/hashicorp/packer-plugin-sdk/didyoumean
 github.com/hashicorp/packer-plugin-sdk/guestexec
@@ -401,7 +401,7 @@ github.com/hashicorp/yamux
 # github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869
 ## explicit
 github.com/jehiah/go-strftime
-# github.com/klauspost/compress v1.18.6
+# github.com/klauspost/compress v1.18.7
 ## explicit; go 1.24
 github.com/klauspost/compress
 github.com/klauspost/compress/fse
@@ -411,6 +411,8 @@ github.com/klauspost/compress/internal/le
 github.com/klauspost/compress/internal/snapref
 github.com/klauspost/compress/zstd
 github.com/klauspost/compress/zstd/internal/xxhash
+# github.com/kr/pretty v0.3.1
+## explicit; go 1.12
 # github.com/mattn/go-colorable v0.1.15
 ## explicit; go 1.18
 github.com/mattn/go-colorable
@@ -441,6 +443,8 @@ github.com/mitchellh/reflectwalk
 # github.com/oklog/ulid/v2 v2.1.1
 ## explicit; go 1.15
 github.com/oklog/ulid/v2
+# github.com/rogpeppe/go-internal v1.14.1
+## explicit; go 1.23
 # github.com/ryanuber/go-glob v1.0.0
 ## explicit
 github.com/ryanuber/go-glob
@@ -458,6 +462,8 @@ github.com/spdx/tools-golang/spdx/v2/common
 github.com/spdx/tools-golang/spdx/v2/v2_1
 github.com/spdx/tools-golang/spdx/v2/v2_2
 github.com/spdx/tools-golang/spdx/v2/v2_3
+# github.com/stretchr/objx v0.5.2
+## explicit; go 1.20
 # github.com/ugorji/go/codec v1.3.1
 ## explicit; go 1.21
 github.com/ugorji/go/codec
@@ -476,7 +482,7 @@ github.com/vmihailenco/msgpack/v5/msgpcode
 github.com/vmihailenco/tagparser/v2
 github.com/vmihailenco/tagparser/v2/internal
 github.com/vmihailenco/tagparser/v2/internal/parser
-# github.com/zclconf/go-cty v1.17.0 => github.com/nywilken/go-cty v1.13.3
+# github.com/zclconf/go-cty v1.18.1 => github.com/nywilken/go-cty v1.13.3
 ## explicit; go 1.18
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert
@@ -493,24 +499,17 @@ github.com/zclconf/go-cty-yaml
 # go.yaml.in/yaml/v3 v3.0.4
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
-# golang.org/x/crypto v0.53.0
-## explicit; go 1.25.0
+# golang.org/x/crypto v0.56.0
+## explicit; go 1.26.0
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
-golang.org/x/crypto/cast5
-golang.org/x/crypto/openpgp
-golang.org/x/crypto/openpgp/armor
-golang.org/x/crypto/openpgp/elgamal
-golang.org/x/crypto/openpgp/errors
-golang.org/x/crypto/openpgp/packet
-golang.org/x/crypto/openpgp/s2k
 # golang.org/x/exp v0.0.0-20260611194520-c48552f49976
 ## explicit; go 1.25.0
 golang.org/x/exp/slices
-# golang.org/x/mod v0.37.0
+# golang.org/x/mod v0.40.0
 ## explicit; go 1.25.0
 golang.org/x/mod/semver
-# golang.org/x/net v0.56.0
+# golang.org/x/net v0.58.0
 ## explicit; go 1.25.0
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -522,14 +521,14 @@ golang.org/x/net/internal/httpsfv
 ## explicit; go 1.25.0
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sync v0.21.0
+# golang.org/x/sync v0.22.0
 ## explicit; go 1.25.0
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.46.0
+# golang.org/x/sys v0.47.0
 ## explicit; go 1.25.0
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.38.0
+# golang.org/x/text v0.41.0
 ## explicit; go 1.25.0
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
@@ -550,7 +549,7 @@ golang.org/x/text/unicode/norm
 # golang.org/x/time v0.15.0
 ## explicit; go 1.25.0
 golang.org/x/time/rate
-# golang.org/x/tools v0.46.0
+# golang.org/x/tools v0.49.0
 ## explicit; go 1.25.0
 golang.org/x/tools/cmd/stringer
 golang.org/x/tools/go/ast/edge
@@ -558,7 +557,6 @@ golang.org/x/tools/go/ast/inspector
 golang.org/x/tools/go/gcexportdata
 golang.org/x/tools/go/packages
 golang.org/x/tools/go/types/objectpath
-golang.org/x/tools/go/types/typeutil
 golang.org/x/tools/internal/aliases
 golang.org/x/tools/internal/event
 golang.org/x/tools/internal/event/core
@@ -566,13 +564,13 @@ golang.org/x/tools/internal/event/keys
 golang.org/x/tools/internal/event/label
 golang.org/x/tools/internal/gcimporter
 golang.org/x/tools/internal/gocommand
+golang.org/x/tools/internal/moremaps
 golang.org/x/tools/internal/packagesinternal
 golang.org/x/tools/internal/pkgbits
 golang.org/x/tools/internal/stdlib
-golang.org/x/tools/internal/typeparams
 golang.org/x/tools/internal/typesinternal
 golang.org/x/tools/internal/versions
-# google.golang.org/protobuf v1.36.11
+# google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 ## explicit; go 1.23
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
@@ -601,4 +599,6 @@ google.golang.org/protobuf/reflect/protoreflect
 google.golang.org/protobuf/reflect/protoregistry
 google.golang.org/protobuf/runtime/protoiface
 google.golang.org/protobuf/runtime/protoimpl
+# gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+## explicit; go 1.11
 # github.com/zclconf/go-cty => github.com/nywilken/go-cty v1.13.3
